@@ -1,0 +1,11 @@
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+*.log
+*.env
+__pycache__/
+env/
+venv/
+**/migrations/*
+!**/migrations/__init__.py
