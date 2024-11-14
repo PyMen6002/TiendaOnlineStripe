@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio | Mi Tienda</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Personalización de estilos */
+        .video-background {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            overflow: hidden;
+        }
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            z-index: 2;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* Estilo para los productos destacados (texto blanco con contorno negro) */
+        .carousel-caption h5, .carousel-caption p {
+            color: white; /* Color de texto blanco */
+            text-shadow: 6px 6px 9px black, -6px -6px 9px black, 6px -6px 9px black, -6px 6px 9px black; 
+            /* Sombra para crear contorno negro */
+        }
+
+        /* Estilo para las imágenes de los productos */
+        .producto-imagen {
+            object-fit: cover; /* Asegura que la imagen no se distorsione y se ajuste al contenedor */
+            height: 300px; /* Altura fija para las imágenes */
+            width: 100%; /* La imagen ocupa el 100% del ancho del contenedor */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/home">Mi Tienda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/home">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrito">Carrito</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Video de fondo en la sección de bienvenida -->
+    <div class="video-background">
+        <video autoplay muted loop>
+            <source src="{% static 'home/imgs/video.mp4' %}" type="video/mp4">
+        </video>
+        <div class="overlay"></div>
+        <div class="video-content">
+            <h1 class="display-4">Bienvenidos a Mi Tienda</h1>
+            <p class="lead">Encuentra productos increíbles para ti y los tuyos</p>
+            <a href="/shop" class="btn btn-primary btn-lg mt-3">Explorar Productos</a>
+        </div>
+    </div>
+
+    <!-- Sección de productos destacados -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Productos Destacados</h2>
+        <div id="carouselDestacados" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for producto in productos_destacados %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <!-- Imagen de producto destacada, hacerla clickeable -->
+                        <a href="{% url 'detalle_producto' producto.id %}">
+                            <img src="{{ producto.imagen.url }}" class="d-block w-100 producto-imagen" alt="{{ producto.nombre }}">
+                        </a>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>{{ producto.nombre }}</h5>
+                            <p>{{ producto.descripcion|truncatewords:20 }}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="carousel-item active">
+                        <p>No hay productos destacados en este momento.</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselDestacados" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselDestacados" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Sección de categorías -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Explora nuestras categorías</h2>
+        <div class="row">
+            {% for categoria in categorias %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <!-- Mostrar imagen de la categoría -->
+                        <img src="{{ categoria.imagen.url }}" class="card-img-top" alt="{{ categoria.nombre }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ categoria.nombre }}</h5>
+                            <p class="card-text">{{ categoria.descripcion }}</p>
+                            <a href="/shop?category={{ categoria.id }}" class="btn btn-primary">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4">
+        <p>&copy; 2024 Mi Tienda. Todos los derechos reservados.</p>
+        <p>Síguenos en nuestras redes sociales</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
